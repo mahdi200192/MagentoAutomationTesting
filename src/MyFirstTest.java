@@ -1,8 +1,10 @@
+import java.awt.Window;
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -76,11 +78,27 @@ public class MyFirstTest {
 		createAccountButton.click();
 
 		emailAdressToLogin = firstname + lastname + randomnumber + domainname;
+		
+		WebElement MessageAsWebElement = driver.findElement(By.className("messages"));
+		 
+		String TeActualMessage = MessageAsWebElement.getText();
+		String TheExpectedMessage = "Thank you for registering with Main Website Store.";
+		
+		Assert.assertSame(TeActualMessage, TheExpectedMessage);
+		
+		
 	}
 
 	@Test(priority = 2, enabled = false)
 	public void Logout() {
 		driver.get(logoutPage);
+		WebElement LogoutMessage = driver.findElement(By.xpath("//span[@data-ui-id='page-title-wrapper']"));
+		
+		String ActualMessafe = LogoutMessage.getText();
+		String ExpectedMessage= "You are signed out";
+		
+		Assert.assertEquals(ActualMessafe, ExpectedMessage);
+		
 
 	}
 
@@ -96,15 +114,23 @@ public class MyFirstTest {
 		EmailLoginInput.sendKeys(emailAdressToLogin);
 		passwordInput.sendKeys(Password);
 		LoginButton.click();
+		
+		String WelcomeMessage = driver.findElement(By.className("logged-in")).getText();
+		
+		boolean ActualValue = WelcomeMessage.contains("Welcome");
+		boolean ExpectedValue = true;
+		
+		Assert.assertEquals(ActualValue, ExpectedValue);
+		
 
 	}
 
-	@Test(priority = 4)
+	@Test(priority = 4, enabled = false)
 	public void Men() throws InterruptedException {
 
 		WebElement MenSection = driver.findElement(By.id("ui-id-5"));
 		MenSection.click();
-
+ 
 		WebElement ProductItemsContainer = driver.findElement(By.className("product-items"));
 		List<WebElement> AllItems = ProductItemsContainer.findElements(By.tagName("li"));
 
@@ -132,6 +158,84 @@ public class MyFirstTest {
 
 		WebElement MessageAdded = driver.findElement(By.className("message-success"));
 		Assert.assertEquals(MessageAdded.getText().contains("You added"), true);
+
+	}
+	
+	@Test(priority = 5)
+	public void Women() throws InterruptedException {
+
+		WebElement WomenSection = driver.findElement(By.id("ui-id-4"));
+		WomenSection.click();
+ 
+		WebElement ProductItemsContainer = driver.findElement(By.className("product-items"));
+		List<WebElement> AllItems = ProductItemsContainer.findElements(By.tagName("li"));
+
+		int totalNumberOfItems = AllItems.size();
+		int randomItem = rand.nextInt(totalNumberOfItems);
+
+		AllItems.get(randomItem).click();
+
+		WebElement theContainerOfSizes = driver.findElement(By.cssSelector(".swatch-attribute-options.clearfix"));
+
+		List<WebElement> ListOfSizes = theContainerOfSizes.findElements(By.className("swatch-option"));
+		int numberOfSizes = ListOfSizes.size();
+		int randomSize = rand.nextInt(numberOfSizes);
+		ListOfSizes.get(randomSize).click();
+
+		WebElement ColorContainer = driver
+				.findElement(By.cssSelector("div[class='swatch-attribute color'] div[role='listbox']"));
+		List<WebElement> ListOfColors = ColorContainer.findElements(By.tagName("div"));
+		int numberOfColors = ListOfColors.size();
+		int randomColor = rand.nextInt(numberOfColors);
+		ListOfColors.get(randomColor).click();
+
+		WebElement AddToCartButton = driver.findElement(By.id("product-addtocart-button"));
+		AddToCartButton.click();
+
+		WebElement MessageAdded = driver.findElement(By.className("message-success"));
+		Assert.assertEquals(MessageAdded.getText().contains("You added"), true);
+		
+		WebElement ReviewsButton = driver.findElement(By.id("tab-label-reviews-title"));
+		ReviewsButton.click();
+		
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		
+		js.executeScript("window.scrollTo(0,1200)");
+		Thread.sleep(2000);
+		
+		WebElement RatingStars = driver.findElement(By.cssSelector(".control.review-control-vote"));
+		Thread.sleep(2000);
+		
+		String [] ids = {"Rating_1", "Rating_2","Rating_3", "Rating_4", "Rating_5"};
+		int randomIDS = rand.nextInt(ids.length);
+		
+
+		// from chatGpt
+		WebElement element = driver.findElement(By.id(ids[randomIDS]));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+
+
+		
+		
+		WebElement Nickname = driver.findElement(By.id("nickname_field"));
+		Nickname.sendKeys("mahdi");
+		
+		WebElement Summary = driver.findElement(By.id("summary_field"));
+		Summary.sendKeys("mahdihajeid");
+		
+		WebElement Review = driver.findElement(By.id("review_field"));
+		Review.sendKeys("This is a review");
+		
+		WebElement SubmitReviewButton = driver.findElement(By.cssSelector(".action.submit.primary"));
+		SubmitReviewButton.click();
+		
+		String ActualMessaForReview = driver.findElement(By.cssSelector(".message-success.success.message")).getText();
+		String ExpectedMessageForReview = "You submitted your review for moderation.";
+		
+		Assert.assertEquals(ActualMessaForReview, ExpectedMessageForReview);
+		
+		
+		
 
 	}
 }

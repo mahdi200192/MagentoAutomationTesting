@@ -6,7 +6,7 @@
       <class name="MyFirstTest">
         <methods>
           <include name="mySetup"/>
-          <include name="Men"/>
+          <include name="Women"/>
         </methods>
       </class> <!-- MyFirstTest -->
     </classes>
